@@ -1,3 +1,7 @@
+body {
+    margin: 0 auto;
+    width: 90%;
+}
 #viz {
     background-color: white;
 }
@@ -14,6 +18,6 @@ table, th, td {
     content:"";
     position: absolute;
     border-bottom:1px solid black; /*use this to adjust underlin color and size*/
-    width:95%;  /*use this to adjust underline width*/
+    width:90%;  /*use this to adjust underline width*/
     height:1.1em; /*use this to adjust underline position*/
 }
