@@ -65,7 +65,7 @@ function renderNetworkViz(nodes, links) {
 
   // Define width and height for SVG/visualization
   var width = window.innerWidth/1.1
-  var height = window.innerHeight/2
+  var height = window.innerHeight/1.25
   
   // Select svg from DOM
   var svg = d3.select('svg')
@@ -77,7 +77,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.06 / nodes.length })
+    .strength(function (link) { return 0.1 / nodes.length })
   
   // Set up simulation
   var simulation = d3
@@ -120,25 +120,25 @@ function renderNetworkViz(nodes, links) {
   dragHandler(svg.selectAll("use"))
   
   // Create Node Labels
-  var nodeText = svg.append("g")
+  var nodeLabels = svg.append("g")
     .attr("class", "texts")
     .selectAll("text")
     .data(nodes)
     .enter().append("text")
       .text(function (node) { return  node.id })
-      .attr("font-size", 15)
+      .attr("font-size", 14)
       .style("text-anchor", "middle")
       .style("font-weight", "bold")
       .attr("fill", "white")
-      .attr("dx", 0)
-      .attr("dy", 40)
+      .attr("dx", -6)
+      .attr("dy", 29)
 
   // Define what happens when hovering over node
   function mouseOverNode(selectedNode) {
     var neighbors = getNeighbors(selectedNode)
     // we modify the styles to highlight selected nodes
     nodeElements.attr('fill', function (node) { return getNodeColor(node, neighbors) })
-    //nodeText.attr('fill', function (node) { return getTextColor(node, neighbors) })
+    //nodeLabels.attr('fill', function (node) { return getTextColor(node, neighbors) })
     linkElements.attr('stroke', function (link) { return getLinkColor(selectedNode, link) })
   }
 
@@ -146,7 +146,7 @@ function renderNetworkViz(nodes, links) {
   function mouseOutNode(selectedNode) {
     // we modify the styles to not highlight selected nodes
     nodeElements.attr('fill', node => node.id === "User" ? 'black' : 'gray')
-    nodeText.attr('fill', 'white')
+    nodeLabels.attr('fill', 'white')
     linkElements.attr('stroke', '#E5E5E5')
   }
 
@@ -156,9 +156,12 @@ function renderNetworkViz(nodes, links) {
   .style("opacity", 0)
 
   function mouseOverLink(link) {
+    let person1 = link.source.id === "User" ? "User" : "person " + link.source.id
+    let person2 = link.target.id === "User" ? "User" : "person " + link.target.id
     tooltip
       .style("opacity", 1)
-      .html("<ul class='tooltip'><li>" + link.movie.join("</li><li>") + "</li></ul>")
+      .html(`<ul class='tooltip'><strong>Movies liked by ${person1} and ${person2}:</strong>
+      <li>${link.movies.join("</li><li>")}</li></ul>`)
       .style("left", d3.event.pageX + "px")
       .style("top", d3.event.pageY + "px")
   }
@@ -180,9 +183,6 @@ function renderNetworkViz(nodes, links) {
       .attr("transform", "translate(-10,-10)")
       .on('mouseout', mouseOutLink)
       .on('mouseover', mouseOverLink)
-      //.text(function (link) { return  String(link.movie) })
-      //.attr("font-size", 15)
-      //.style("font-weight", "bold")
   
 
   // Define what happens at every tick of the simulation's internal timer
@@ -190,7 +190,7 @@ function renderNetworkViz(nodes, links) {
     nodeElements
       .attr('x', function (node) { return node.x })
       .attr('y', function (node) { return node.y })
-    nodeText
+    nodeLabels
       .attr('x', function (node) { return node.x })
       .attr('y', function (node) { return node.y })
     linkElements

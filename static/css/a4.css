@@ -2,9 +2,6 @@ body {
     margin: 0 auto;
     width: 90%;
 }
-#viz {
-    background-color: white;
-}
 table, th, td {
     border: 1px solid black;
     min-width: 75%;
@@ -25,9 +22,9 @@ table, th, td {
     pointer-events: all;
 }
 .tooltip {
-    display: inline-block;	
     position: absolute;
-    min-width: 200px;								
+    min-width: 225px;
+    max-width: 300px;								
     font: 12px sans-serif;		
     background: lightsteelblue;	
     border-radius: 8px;			
