@@ -17,7 +17,7 @@ fetch('http://localhost:8080/').then(function(response) {
  * ============================================================================
  */
 
-function getNeighbors(node) {
+function getNeighbors(node, links) {
   return links.reduce(function (neighbors, link) {
       if (link.target.id === node.id) {
         neighbors.push(link.source.id)
@@ -51,8 +51,8 @@ function getTextColor(node, neighbors) {
   return Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1 ? 'green' : 'black'
 }
 
-function selectNode(selectedNode) {
-  var neighbors = getNeighbors(selectedNode)
+function selectNode(selectedNode, links) {
+  var neighbors = getNeighbors(selectedNode, links)
   // we modify the styles to highlight selected nodes
   nodeElements.attr('fill', function (node) { return getNodeColor(node, neighbors) })
   textElements.attr('fill', function (node) { return getTextColor(node, neighbors) })
@@ -83,7 +83,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.05 })
+    .strength(function (link) { return 0.003 })
   
   // Set up simulation
   var simulation = d3

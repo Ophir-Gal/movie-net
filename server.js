@@ -28,6 +28,9 @@ function extractNodesAndLinks(ratingData,
   return {"nodes":nodes, "links":links}
 }
 
+// TODO - process ratings_subset data to include actual movie titles
+// TODO - handle case of 2 people liking the same multiple movies
+
 app.get('/', function(req, res){
   readFile("data/ratings_subset.json")
   .then(raw  => {
