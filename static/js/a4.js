@@ -36,9 +36,11 @@ function isNeighborLink(node, link) {
 
 function getNodeColor(node, neighbors) {
   if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
-    return node.level === 1 ? 'blue' : 'green'
+    //return node.? === 1 ? 'blue' : 'green'
+    return 'blue'
   }
-  return node.level === 1 ? 'red' : 'gray'
+  //return node.? === 1 ? 'red' : 'gray'
+  return 'gray'
 }
 
 function getLinkColor(node, link) {
@@ -81,7 +83,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return link.strength })
+    .strength(function (link) { return 0.05 })
   
   // Set up simulation
   var simulation = d3
@@ -122,7 +124,7 @@ function renderNetworkViz(nodes, links) {
     .selectAll("circle")
     .data(nodes)
     .enter().append("circle")
-      .attr("r", 10)
+      .attr("r", 20)
       .attr("fill", getNodeColor)
       .call(dragDrop)
       .on('click', selectNode)
@@ -133,10 +135,10 @@ function renderNetworkViz(nodes, links) {
     .selectAll("text")
     .data(nodes)
     .enter().append("text")
-      .text(function (node) { return  node.label })
+      .text(function (node) { return  node.id })
       .attr("font-size", 15)
-      .attr("dx", 15)
-      .attr("dy", 4)
+      .attr("dx", 0)
+      .attr("dy", 0)
   
   // Create Link Labels
   var linkText = svg.append("g")
@@ -144,7 +146,7 @@ function renderNetworkViz(nodes, links) {
     .selectAll("text")
     .data(links)
     .enter().append("text")
-      .text(function (link) { return  link.strength })
+      .text(function (link) { return  link.movie })
       .attr("font-size", 15)
       .attr("dx", 0)
       .attr("dy", 0)    

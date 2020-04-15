@@ -8,13 +8,43 @@ var app = express();
 app.use(cors()); // enable cors
 app.use(express.static('.'))
 
+function extractNodesAndLinks(ratingData,
+                              selectedMovies=[1,318,6238,920],
+                              userIDs=["User",1,2,3,4,5],
+                              likeThreshold=0) {
+  var nodes = []
+  var links = []
+  for (let userId of userIDs){
+    nodes.push({"id":userId})
+    for (let d of ratingData){
+      if (d["id"] !== userId &&
+          selectedMovies.includes(d["movieId"]) &&
+          d["rating"] >= likeThreshold){
+        links.push({"target":userId,"source":d["id"], "movie":d["movieId"]})
+      }
+    }
+  }
+
+  return {"nodes":nodes, "links":links}
+}
+
 app.get('/', function(req, res){
-  readFile("data/network_data.json")
+  readFile("data/ratings_subset.json")
+  .then(raw  => {
+    var jsonTuples = JSON.parse(raw)
+    var processedData = extractNodesAndLinks(jsonTuples)
+    res.send(processedData)
+  })
+  .catch( e => { console.log(e) });
+
+  /*
+  readFile("data/toy_network_data.json")
   .then(raw  => {
     var data = JSON.parse(raw);
     res.send(data)
   })
   .catch( e => { console.log(e) });
+  */
 });
 
 app.listen(8080, function() {
