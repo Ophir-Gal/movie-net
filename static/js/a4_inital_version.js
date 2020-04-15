@@ -1,10 +1,3 @@
-function getData() {
-    // Code to fetch data from the server
-    // and transform into JSON format
-    return fetch('http://localhost:8080/').then((response) => response.json());
-  }
-  
-  
   var nodes = [
     { id: "mammal", group: 0, label: "Mammals", level: 1 },
     { id: "dog"   , group: 0, label: "Dogs"   , level: 2 },
@@ -111,7 +104,7 @@ function getData() {
   
     // we modify the styles to highlight selected nodes
     nodeElements.attr('fill', function (node) { return getNodeColor(node, neighbors) })
-    textElements.attr('fill', function (node) { return getTextColor(node, neighbors) })
+    nodeText.attr('fill', function (node) { return getTextColor(node, neighbors) })
     linkElements.attr('stroke', function (link) { return getLinkColor(selectedNode, link) })
   }
   
