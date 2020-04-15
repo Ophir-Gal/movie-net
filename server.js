@@ -54,15 +54,6 @@ app.get('/', function(req, res){
     res.send(processedData)
   })
   .catch( e => { console.log(e) });
-
-  /*
-  readFile("data/toy_network_data.json")
-  .then(raw  => {
-    var data = JSON.parse(raw);
-    res.send(data)
-  })
-  .catch( e => { console.log(e) });
-  */
 });
 
 app.listen(8080, function() {

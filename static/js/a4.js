@@ -55,26 +55,6 @@ function getLinkColor(node, link) {
  * ============================================================================
  */
 
- /*
- //The line data for our person shape
-var personLineData = [ { "x": 0,   "y": 0},   { "x": 20,  "y": -20},
-{ "x": 0,   "y": -40}, { "x": 60,  "y": -60},
-{ "x": -60, "y": -60}, { "x": -20, "y": -40},
-{ "x": -40,   "y": -20}, { "x": -20,   "y": 0},
-{ "x": -10,   "y": 0}, { "x": 0,   "y": 0}]
-
-//This is the accessor function we talked about above
-var lineFunction = d3.line().curve(d3.curveBundle.beta(1)) 
-               //(d3.curveCardinal.tension(0))
-     .x(function(d) { return d.x })
-     .y(function(d) { return d.y })
-
-//The SVG Container
-var svgContainer = d3.select("body").append("svg")
-                   .attr("width", 200)
-                   .attr("height", 200)
-*/
-
 /**============================================================================
  * ============================= Main Function ================================
  * ============================================================================
@@ -154,20 +134,6 @@ function renderNetworkViz(nodes, links) {
       });
 
   dragHandler(svg.selectAll("use"));
-
-  /*
-  // Create Node Elements (Circles)
-  var nodeElements = svg.append("g")
-    .attr("class", "nodes")
-    .selectAll("circle")
-    .data(nodes)
-    .enter().append("circle")
-      .attr("r", 20)
-      .attr("fill", getNodeColor)
-      .call(dragDrop)
-      .on('mouseover', mouseOverNode)
-      .on('mouseout', mouseOutNode)
-  */
   
   // Create Node Labels
   var nodeText = svg.append("g")
