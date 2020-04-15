@@ -1,12 +1,14 @@
-const util = require('util');
-const fs = require('fs');
+const util = require('util')
+const fs = require('fs')
 const readFile = util.promisify(fs.readFile)
-const express = require('express');
-const cors = require('cors');
+const express = require('express')
+const cors = require('cors')
 
-var app = express();
-app.use(cors()); // enable cors
+var app = express()
+app.use(cors()) // enable cors
 app.use(express.static('.'))
+
+var idToTitle = JSON.parse(fs.readFileSync("data/idToTitle.json"))
 
 function findUndirectedEdge(links, target, source){
   for (let link of links){
@@ -15,7 +17,7 @@ function findUndirectedEdge(links, target, source){
           return link
         }
   }
-  return false;
+  return false
 }
 
 function extractNodesAndLinks(ratingData,
@@ -30,11 +32,14 @@ function extractNodesAndLinks(ratingData,
       if (d["id"] !== userId &&
           selectedMovies.includes(d["movieId"]) &&
           d["rating"] >= likeThreshold){
-        let found = findUndirectedEdge(links, target=userId, source=d["id"]);
+        let found = findUndirectedEdge(links, target=userId, source=d["id"])
+        let movieTitle = idToTitle[String(d["movieId"])]["title"]
         if (found){
-          found["movie"] += "," + d["movieId"]
+          if (!found["movie"].includes(movieTitle)){
+            found["movie"].push(movieTitle) 
+          }
         } else {
-          links.push({"target":userId,"source":d["id"], "movie":d["movieId"]})
+          links.push({"target":userId, "source":d["id"], "movie":[movieTitle]})
         }
       }
     }
@@ -53,9 +58,9 @@ app.get('/', function(req, res){
     var processedData = extractNodesAndLinks(jsonTuples)
     res.send(processedData)
   })
-  .catch( e => { console.log(e) });
-});
+  .catch( e => { console.log(e) })
+})
 
 app.listen(8080, function() {
   console.log("A4 Data Server is running at localhost: 8080")
-});
+})

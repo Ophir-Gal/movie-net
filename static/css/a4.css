@@ -21,3 +21,19 @@ table, th, td {
     width:90%;  /*use this to adjust underline width*/
     height:1.1em; /*use this to adjust underline position*/
 }
+#film-icon-g {
+    pointer-events: all;
+}
+.tooltip {
+    display: inline-block;	
+    position: absolute;
+    min-width: 200px;								
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+ul.tooltip {
+    list-style: inside;
+    padding: 5px;
+}
