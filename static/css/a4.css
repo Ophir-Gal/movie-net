@@ -1,0 +1,20 @@
+#viz {
+    background-color: white;
+}
+table, th, td {
+    border: 1px solid black;
+    min-width: 75%;
+    max-width: 75%;
+    
+    text-align: center;
+}
+.p {
+    max-width: 600px;
+}
+.u_title::before {
+    content:"";
+    position: absolute;
+    border-bottom:1px solid black; /*use this to adjust underlin color and size*/
+    width:95%;  /*use this to adjust underline width*/
+    height:1.1em; /*use this to adjust underline position*/
+}

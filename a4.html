@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>A4: Ophir Gal</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="static/js/a4.js"></script>
+  <link rel="stylesheet" type="text/css" href="./static/css/a4.css">
+</head>
+
+<body>
+  <h1>Assignment 4: Implementing Interactions in D3.js</h1>
+  <i><h3>Created By: Ophir Gal</h3></i>
+  <h2 class="u_title">Visualization</h2>
+  <!-- div where the graph will take place -->
+  <svg id="viz"></svg>
+  <div class="p">
+    <p>
+      <h2 class="u_title">The Rationale for My Design</h2>
+      <h3>How I Chose My Particular Visual Encodings and Interaction
+      Techniques</h3>
+      I've given a lot of thought (over a couple of days) to how I could 
+      create an interactive visualization that's useful for me. I thought, 
+      since my family likes to watch a lot of movies, that it would be nice 
+      if I could create a tool that helps one find movies to watch, differnet 
+      than tools that already exist. I realized that there aren't really 
+      interactive tools out there that visualize the relationship between 
+      people with similar tastes in movies. I then came up with the idea to
+      create a network chart to allow one to see movies that people
+      with similar tastes like. I also wanted them to be able to explore the data
+      set through the interaction, so I wanted nodes of the network to be 
+      clickable, draggable, and able to display more information. Based on that,
+      I defined my research question as: "how can I make it easier for people to 
+      find a movie to watch, based on what people with similar tastes like?"
+    </p>
+    <h3>The Alternatives I Considered and How I Arrived at My Ultimate Choice
+    </h3>
+    The other types of charts I've considered are: a chord diagram, an arc 
+    diagram, edge bundling, and a heat map. Like networks, these charts can 
+    also visualize relationships between data objects. Networks however, 
+    especially interactive ones, are not only more intuitive in many cases, but
+    they are also better suited for exploring the data via jumping from one 
+    relationship to the next.
+    <h2 class="u_title">Dataset</h2>
+    I chose the <strong>MovieLens 25M Dataset</strong>. It contains 25 million 
+    ratings and one million tag applications applied to 62,000 movies by 
+    162,000 users. It was released in December 2019.
+
+    Permalink:
+    <a href="https://grouplens.org/datasets/movielens/25m/">
+      https://grouplens.org/datasets/movielens/25m/</a>      
+
+
+  </div>
+  
+  <h2 class="u_title">An Overview of My Development Process</h2>
+  <table>
+    <tr>
+      <th>Component</th><th>Estimated Time Spent</th>
+    </tr>
+    <tr>
+      <td>Came up with design idea</td><td>6-8 hours</td>  
+    </tr>
+    <tr>
+      <td>Searched for a public data set online</td><td>1 hours</td>
+    </tr>
+    <tr>
+      <td>Learned to create an interactive network using D3</td><td>5 hours</td>
+    </tr>
+    <tr>
+      <td>Processed data to fit with framework</td><td>? hours</td>
+    </tr>
+    <tr>
+      <td>Developed code to create a network based on user's movie selection</td><td>? hours</td>
+    </tr>
+    <tr>
+      <td>Added movie-selection functionality</td><td>? hours</td>
+    </tr>
+    <tr>
+      <td>Developed code to enable user to choose number of neighbors</td><td>? hours</td>
+    </tr>
+    <tr>
+      <td>Added functionality of jumping to a neighbor's network (by updating the
+      network dynamically)</td><td>? hours</td>
+    </tr>
+  </table>
+
+  <script src="./static/js/a4.js"></script>
+</body>
+</html>
