@@ -11,7 +11,7 @@ app.use(express.static('.'))
 function extractNodesAndLinks(ratingData,
                               selectedMovies=[1,318,6238,920],
                               userIDs=["User",1,2,3,4,5],
-                              likeThreshold=5) {
+                              likeThreshold=0) {
   var nodes = []
   var links = []
   for (let userId of userIDs){

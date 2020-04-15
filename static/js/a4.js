@@ -55,6 +55,7 @@ function getLinkColor(node, link) {
  * ============================================================================
  */
 
+ /*
  //The line data for our person shape
 var personLineData = [ { "x": 0,   "y": 0},   { "x": 20,  "y": -20},
 { "x": 0,   "y": -40}, { "x": 60,  "y": -60},
@@ -72,26 +73,8 @@ var lineFunction = d3.line().curve(d3.curveBundle.beta(1))
 var svgContainer = d3.select("body").append("svg")
                    .attr("width", 200)
                    .attr("height", 200)
+*/
 
-var dragDropPath = d3.drag()
-  .on('start', function (node) {
-    node.fx = node.x
-    node.fy = node.y
-  }).on('drag', function (node) {
-    simulation.alphaTarget(0.7).restart()
-    /*node.fx = d3.event.x
-    node.fy = d3.event.y*/
-    var x = d3.event.dx;
-    var y = d3.event.dy;
-    // Update the node position
-    node.attr("transform", `translate(${x}},${y})`);
-  }).on('end', function (node) {
-    if (!d3.event.active) {
-      simulation.alphaTarget(0)
-    }
-    node.fx = null
-    node.fy = null
-  })
 /**============================================================================
  * ============================= Main Function ================================
  * ============================================================================
@@ -115,7 +98,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.6 / nodes.length })
+    .strength(function (link) { return 0.006 / nodes.length })
   
   // Set up simulation
   var simulation = d3
@@ -150,7 +133,30 @@ function renderNetworkViz(nodes, links) {
       .attr("stroke-width", 1)
       .attr("stroke", "rgba(50, 50, 50, 0.2)")
   
-  // Create Node Elements
+  // Create Node Elements (Person Shapes)
+  var nodeElements = svg.append("g")
+    .attr("class", "nodes")
+    .selectAll("use")
+    .data(nodes)
+    .enter()
+    .append("use")
+    .attr("href", "#g1")
+    .attr("transform", "translate(-38,-25)")
+    .attr("fill", getNodeColor)
+    .on('mouseover', mouseOverNode)
+    .on('mouseout', mouseOutNode)
+
+  var dragHandler = d3.drag()
+      .on("drag", function (d) {
+          d3.select(this)
+              .attr("x", d.x = d3.event.x)
+              .attr("y", d.y = d3.event.y);
+      });
+
+  dragHandler(svg.selectAll("use"));
+
+  /*
+  // Create Node Elements (Circles)
   var nodeElements = svg.append("g")
     .attr("class", "nodes")
     .selectAll("circle")
@@ -161,24 +167,6 @@ function renderNetworkViz(nodes, links) {
       .call(dragDrop)
       .on('mouseover', mouseOverNode)
       .on('mouseout', mouseOutNode)
-    
-  /*
-  var nodeElements = svg.append("g")
-      .attr("class", "nodes")
-      .selectAll("use")
-      .data(nodes).enter().append("use")
-      .attr("id", (d,i) => "person" + String(i))
-      .attr("href", "#g1")
-      .attr("transform", "scale(0.2)")
-    
-  var dragHandler = d3.drag()
-      .on("drag", function () {
-          d3.select(this)
-              .attr("x", d3.event.x)
-              .attr("y", d3.event.y);
-      });
-    
-  dragHandler(svg.selectAll("use"));
   */
   
   // Create Node Labels
@@ -193,7 +181,7 @@ function renderNetworkViz(nodes, links) {
       .style("font-weight", "bold")
       .attr("fill", "white")
       .attr("dx", 0)
-      .attr("dy", 4)
+      .attr("dy", 40)
 
   // Define what happens when hovering over node
   function mouseOverNode(selectedNode) {
@@ -225,11 +213,11 @@ function renderNetworkViz(nodes, links) {
       .attr("dx", 0)
       .attr("dy", 0)    
   
-  // Start simulation of network of nodes
+  // Define what happens at every tick of the simulation's internal timer
   simulation.nodes(nodes).on('tick', () => {
     nodeElements
-      .attr('cx', function (node) { return node.x })
-      .attr('cy', function (node) { return node.y })
+      .attr('x', function (node) { return node.x })
+      .attr('y', function (node) { return node.y })
     nodeText
       .attr('x', function (node) { return node.x })
       .attr('y', function (node) { return node.y })
@@ -242,6 +230,9 @@ function renderNetworkViz(nodes, links) {
       .attr('x', function (link) { return (link.source.x+link.target.x)/2 })
       .attr('y', function (link) { return (link.source.y+link.target.y)/2 })
   })
+
+  // Restart the simulation's timer when it reaches its end
+  simulation.on('end', () => simulation.restart())
   
   // Start simulation of links connectin the nodes 
   simulation.force("link").links(links)
