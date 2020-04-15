@@ -1,12 +1,7 @@
-var calledRenderFunc = false // a flag to ensure not to render viz twice
-
 // Fetch data from the server and render visualization
 fetch('http://localhost:8080/').then(function(response) { 
   response.json().then(data => {  
-    if (!calledRenderFunc) {
-      renderNetworkViz(data.nodes, data.links);
-      calledRenderFunc = true;
-    }
+    renderNetworkViz(data.nodes, data.links);
   })
   .catch(e => console.log(e));
 })
