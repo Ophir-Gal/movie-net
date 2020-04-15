@@ -8,10 +8,20 @@ var app = express();
 app.use(cors()); // enable cors
 app.use(express.static('.'))
 
+function findUndirectedEdge(links, target, source){
+  for (let link of links){
+    if ((link["target"] === target && link["source"] === source) ||
+        (link["target"] === source && link["source"] === target)) {
+          return link
+        }
+  }
+  return false;
+}
+
 function extractNodesAndLinks(ratingData,
                               selectedMovies=[1,318,6238,920],
                               userIDs=["User",1,2,3,4,5],
-                              likeThreshold=0) {
+                              likeThreshold=4) {
   var nodes = []
   var links = []
   for (let userId of userIDs){
@@ -20,7 +30,12 @@ function extractNodesAndLinks(ratingData,
       if (d["id"] !== userId &&
           selectedMovies.includes(d["movieId"]) &&
           d["rating"] >= likeThreshold){
-        links.push({"target":userId,"source":d["id"], "movie":d["movieId"]})
+        let found = findUndirectedEdge(links, target=userId, source=d["id"]);
+        if (found){
+          found["movie"] += "," + d["movieId"]
+        } else {
+          links.push({"target":userId,"source":d["id"], "movie":d["movieId"]})
+        }
       }
     }
   }

@@ -98,7 +98,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.006 / nodes.length })
+    .strength(function (link) { return 0.06 / nodes.length })
   
   // Set up simulation
   var simulation = d3
