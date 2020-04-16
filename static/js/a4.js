@@ -9,7 +9,45 @@ fetch('http://localhost:8080/').then(function(response) {
   .catch(e => console.log(e))
 })
 
-/**
+/*
+ * ============================================================================
+ * ================== Begin Form Event Handling Functions =====================
+ * ============================================================================
+ */
+function sliderChange(value){
+  let span = document.getElementById('ratingStars')
+  span.innerHTML = ""
+  let star_count = 0
+  if (value > 0){
+    let i = 0.5
+    for (i=0; i<Math.floor(value); i++){
+      let full_star = document.createElement("span")
+      full_star.setAttribute('class', 'fa fa-star my-star-icon')
+      span.appendChild(full_star)
+      star_count++
+    }
+    if (value > Math.floor(value)){
+      let half_star = document.createElement("span")
+      half_star.setAttribute('class', 'fa fa-star-half-full my-star-icon')
+      span.appendChild(half_star)
+      star_count++
+    }
+  }
+  while (star_count < 5){
+      let empty_star = document.createElement("span")
+      empty_star.setAttribute('class', 'fa fa-star-o my-star-icon')
+      span.appendChild(empty_star)
+      star_count++
+  }
+}
+
+/*
+ * ============================================================================
+ * ================== End Form Event Handling Functions =======================
+ * ============================================================================
+ */
+
+/*
  * ============================================================================
  * ======================= Begin Utility Functions ============================
  * ============================================================================
@@ -77,7 +115,7 @@ function renderNetworkViz(nodes, links) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.1 / nodes.length })
+    .strength(function (link) { return 0.01 / nodes.length })
   
   // Set up simulation
   var simulation = d3
@@ -203,9 +241,9 @@ function renderNetworkViz(nodes, links) {
       .attr('y', function (link) { return (link.source.y+link.target.y)/2 })
   })
 
-  // Restart the simulation's timer when it reaches its end
+  // Make simulation run non-stop
   simulation.on('end', () => simulation.restart())
   
-  // Start simulation of links connectin the nodes 
+  // Start simulation of links connecting the nodes 
   simulation.force("link").links(links)
 }

@@ -22,16 +22,15 @@ function findUndirectedEdge(links, target, source){
   return false
 }
 
-
 function extractNodesAndLinks(ratingData,
                               selectedMovies=[1,318,6238,920],
                               username="User",
                               numUsersToProcess=10,
-                              likeThreshold=5) {
-  var nodes = []
-  var links = []
+                              likeThreshold=0) {
+  let nodes = []
+  let links = []
   for (let i=0; i<=numUsersToProcess; i++){
-    var userId = i === 0 ? username : i
+    let userId = i === 0 ? username : i
     nodes.push({"id": userId})
     for (let d of ratingData){
       if (d["id"] === userId) {
@@ -56,12 +55,15 @@ function extractNodesAndLinks(ratingData,
 app.get('/', function(req, res){
   readFile("data/ratings.json")
   .then(raw  => {
-    var jsonTuples = JSON.parse(raw)
-    var processedData = extractNodesAndLinks(jsonTuples)
+    let jsonTuples = JSON.parse(raw)
+    let processedData = extractNodesAndLinks(jsonTuples)
     res.send(processedData)
+    console.log(req)
   })
   .catch( e => { console.log(e) })
 })
+
+app.post
 
 app.listen(8080, function() {
   console.log("A4 Data Server is running at localhost: 8080")

@@ -6,12 +6,33 @@
   <script type="text/javascript" src="https://d3js.org/d3.v5.js"></script>
   <script type="text/javascript" src="static/js/a4.js"></script>
   <link rel="stylesheet" type="text/css" href="./static/css/a4.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
   <h1>Assignment 4: Implementing Interactions in D3.js</h1>
   <i><h3>Created By: Ophir Gal</h3></i>
   <h2 class="u_title">Visualization</h2>
+  <!-- form for user inputs -->
+  <form action="javascript: submitForm()">
+    <label for="vol">"Like" Threshold:</label><br>
+    <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
+    step="0.5" value="3.5" onmousemove="sliderChange(document.getElementById('likeThreshold').value)">
+    <span>&nbsp;&nbsp;</span>
+    <span id="ratingStars">
+      <span class="fa fa-star my-star-icon"></span>
+      <span class="fa fa-star my-star-icon"></span>
+      <span class="fa fa-star my-star-icon"></span>
+      <span class="fa fa-star-half-full my-star-icon"></span>
+      <span class="fa fa-star-o my-star-icon"></span>
+    </span>
+    <br><br>
+    <label for="movieTitle">Movie Title:</label><br>
+    <input type="text" name="movieTitle" placeholder="Toy Story"
+    id="movieTitle">
+    <br><br>
+    <input type="submit" value="Render Network">
+  </form>
   <!-- div where the graph will take place -->
   <svg id="viz"></svg>
   <div class="p">

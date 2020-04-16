@@ -34,3 +34,10 @@ ul.tooltip {
     list-style: inside;
     padding: 5px;
 }
+.my-star-icon {
+    color: orange;
+    font-size: 30px !important;
+}
+#ratingStars {
+    font-size: 0px;
+}
