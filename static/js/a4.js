@@ -81,11 +81,12 @@ function submitForm(){
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
       let nearestOnly = document.getElementById('nearestOnly').checked
-      idToTitle = dataDict.idToTitleDict // need to be global scope
+      idToTitle = dataDict.idToTitleDict  // need to be global scope
+      titleToId = dataDict.titleToIdDict  // need to be global scope
       let selectedMovies = getSelectedMovieIDs()
       let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
                                                username=username,
-                                               selectedMovies=[1,2,145,318,6238,920],
+                                               selectedMovies=selectedMovies,
                                                numUsersToProcess=numUsersToProcess,
                                                likeThreshold=likeThreshold,
                                                idToTitle=idToTitle,
@@ -97,11 +98,11 @@ function submitForm(){
 }
 
 function getSelectedMovieIDs(){
-  let selectedMovies = []
+  let selectedMovieIDs = []
   for (let listItem of document.getElementsByClassName('selected-movie')){
-    selectedMovies.push(listItem.innerHTML)
+    selectedMovieIDs.push(titleToId[listItem.innerHTML])
   }
-  return selectedMovies
+  return selectedMovieIDs
 }
 
 function starSliderChange(value){
