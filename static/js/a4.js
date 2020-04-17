@@ -1,4 +1,4 @@
-var idToTitle // declare here so it has global scope
+var idToTitle, titleToId // declare here so it has global scope
 const TOTAL_NUM_OF_USERS = 610  // number of users in the rating data
 submitForm()  // Submit form to immediately generate viz upon webpage load
 
@@ -148,17 +148,13 @@ function autocomplete(val) {
 movieInput.onkeyup = function(e) {
   input_val = this.value
 
-  if (input_val.length >= 3) {
+  if (input_val.length >= 3  && input_val !== "the" && input_val !== "the ") {
     autocomplete_results.innerHTML = ""
     movies_to_show = autocomplete(input_val)
 
     for (i = 0; i < movies_to_show.length; i++) {
       autocomplete_results.innerHTML +=
-        "<li id=" +
-        movies_to_show[i] +
-        ' class="list-item">' +
-        movies_to_show[i] +
-        "</li>"
+        '<li class="list-item">' + movies_to_show[i] + '</li>'
     }
     autocomplete_results.style.display = "block"
   } else {
@@ -173,8 +169,10 @@ autocomplete_results.addEventListener("click", function(e) {
     if (e.target && e.target.nodeName == "LI") { // If it was a list item
       // List item found!  Output the value and add it to selected movies!
       console.log("Selected", e.target.innerHTML)
-      movieInput.value = e.target.innerHTML
-      autocomplete_results.innerHTML = null //empty the value
+      document.getElementById('selectedMovies')
+        .innerHTML += '<li class="list-item">' + e.target.innerHTML + '</li>'
+      movieInput.value = ""
+      autocomplete_results.innerHTML = "" // empty the dropdown menu
     }
 })
 
