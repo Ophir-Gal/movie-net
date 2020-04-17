@@ -55,6 +55,10 @@ ul.tooltip {
     color: orange;
     font-size: 30px !important;
 }
+#username {
+    width: 100%;
+    -webkit-appearance: none;
+}
 #ratingStars {
     font-size: 0px;
 }
@@ -76,39 +80,35 @@ ol#autocomplete-results, ul#autocomplete-results {
     list-style: none;
 }
 #autocomplete-container {
-width: 300px;
-margin: 50px auto;
+    width: 100%;
+    margin: auto;
 }
-#autocomplete-input {
-background: white;
--moz-appearance: none;
--webkit-appearance: none;
-width: 100%;
-padding: 20px 15px;
-border: pink;
-outline: none;
-color: black;
-font-size: 20px;
+#autocomplete-movieInput {
+    background: white;
+    -webkit-appearance: none;
+    width: 100%;
+    color: black;
 }
 #autocomplete-input:-webkit-placeholder {
-color: grey;
+    color: grey;
 }
 #autocomplete-input::-moz-placeholder {
-color: grey;
+    color: grey;
 }
 #autocomplete-results {
-display: none;
-width: 100%;
-margin-top: -2px;
-color: black;
+    display: none;
+    width: 102%;
+    margin-top: -2px;
+    margin-left: -17.5%;
+    color: black;
 }
 #autocomplete-results li {
-width: 100%;
-padding: 7px 15px;
-border-right: 2px solid black;
-border-bottom: 2px solid black;
-border-left: 2px solid black;
+    padding: 7px 15px;
+    text-align: left;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
 }
 #autocomplete-results li:hover {
-background:rgba(105, 111, 118, 0.8);;
+    background:rgba(105, 111, 118, 0.8);;
 }
