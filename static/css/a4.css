@@ -69,6 +69,7 @@ ul.tooltip {
     text-align: left; 
     list-style: inside;
     padding: 10px;
+    border-radius: 10px;
     box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 

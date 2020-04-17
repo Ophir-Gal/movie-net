@@ -22,7 +22,7 @@
           <br><br>
           <label for="vol">"Like" Threshold:</label><br>
           <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
-          step="0.5" value="3.5"
+          step="0.5" value="3.5" 
           onmousemove="starSliderChange(Number(document.getElementById('likeThreshold').value))">
           <br>
           <span id="ratingStars">
@@ -49,15 +49,16 @@
           <div>
             <p>Selected Movies</p>
             <ul id="selectedMovies" name="selectedMovies">
-              <li>Toy Story (1995)</li>
-              <li>Shawshank Redemption, The (1994)</li>
-              <li>Green Card (1990)</li>
-              <li>Gone with the Wind (1939)</li>
-              <li>Bad Boys (1995)</li>
-              <li>Jumanji (1995)</li>
+              <li class="selected-movie">Toy Story (1995)</li>
+              <li class="selected-movie">Shawshank Redemption, The (1994)</li>
+              <li class="selected-movie">Green Card (1990)</li>
+              <li class="selected-movie">Gone with the Wind (1939)</li>
+              <li class="selected-movie">Bad Boys (1995)</li>
+              <li class="selected-movie">Jumanji (1995)</li>
             </ul>
-            <input type="submit" value="Clear Movie List" 
-             onclick="document.getElementById('selectedMovies').innerHTML=''">
+            <input type="button" value="Clear Movie List"
+             onclick="document.getElementById('selectedMovies').innerHTML=''; 
+                      submitForm()">
           </div> 
           <br><br>
           <input type="checkbox" id="nearestOnly" name="nearestOnly" checked>

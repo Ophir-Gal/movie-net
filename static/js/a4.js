@@ -82,6 +82,7 @@ function submitForm(){
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
       let nearestOnly = document.getElementById('nearestOnly').checked
       idToTitle = dataDict.idToTitleDict // need to be global scope
+      let selectedMovies = getSelectedMovieIDs()
       let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
                                                username=username,
                                                selectedMovies=[1,2,145,318,6238,920],
@@ -93,6 +94,14 @@ function submitForm(){
     })
     .catch(e => console.log(e))
   })
+}
+
+function getSelectedMovieIDs(){
+  let selectedMovies = []
+  for (let listItem of document.getElementsByClassName('selected-movie')){
+    selectedMovies.push(listItem.innerHTML)
+  }
+  return selectedMovies
 }
 
 function starSliderChange(value){
@@ -135,8 +144,7 @@ function autocomplete(val) {
   var movies_returned = []
   for (let key in idToTitle) {
     let movieTitle = idToTitle[key].title
-    // if match 
-    // !!! TODO !!! consider changing to if includes
+    // if matches movie title 
     if (movieTitle.toLowerCase().includes(val.toLowerCase())) { 
       movies_returned.push(movieTitle)
     }
@@ -166,11 +174,15 @@ movieInput.onkeyup = function(e) {
 // Add a click listener to auto-compete results list
 autocomplete_results.addEventListener("click", function(e) {
     // e.target is the clicked element
+    let selectedTitle = e.target.innerHTML
     if (e.target && e.target.nodeName == "LI") { // If it was a list item
       // List item found!  Output the value and add it to selected movies!
-      console.log("Selected", e.target.innerHTML)
-      document.getElementById('selectedMovies')
-        .innerHTML += '<li class="list-item">' + e.target.innerHTML + '</li>'
+      console.log("Selected", selectedTitle)
+      let listItemToAdd = '<li class="selected-movie">' + selectedTitle + '</li>'
+      let selectedMovies = document.getElementById('selectedMovies')
+      if (!selectedMovies.innerHTML.includes(selectedTitle)) {
+        selectedMovies.innerHTML = listItemToAdd + selectedMovies.innerHTML
+      }
       movieInput.value = ""
       autocomplete_results.innerHTML = "" // empty the dropdown menu
     }
