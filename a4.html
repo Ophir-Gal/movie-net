@@ -23,7 +23,7 @@
           <label for="vol">"Like" Threshold:</label><br>
           <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
           step="0.5" value="3.5"
-          onmousemove="sliderChange(Number(document.getElementById('likeThreshold').value))">
+          onmousemove="starSliderChange(Number(document.getElementById('likeThreshold').value))">
           <br>
           <span id="ratingStars">
             <span class="fa fa-star my-star-icon"></span>
@@ -39,8 +39,14 @@
           <input type="range" id="numUsers" name="numUsers" min="0" max="610"
           step="1" value="10" onmousemove="displayNumUsers(document.getElementById('numUsers').value)">
           <br><br>
-          <label for="movieTitle">Movie Title:</label><br>
-          <input type="text" name="movieTitle" placeholder="Toy Story" id="movieTitle">
+          <label for="movieTitle">Select Movies:</label><br>
+          <div id="autocomplete-container">
+            <input id="autocomplete-input" type="text" autofocus="true" name="autofocus sample" 
+            placeholder="Search by Country" id="autocomplete-input"></input>
+            <ul id="autocomplete-results">
+            </ul>
+          </div>          
+          <input type="text" name="movieTitle" placeholder="Search by title..." id="movieTitle">
           <br><br>
           <div>
             <ul id="selectedMovies">

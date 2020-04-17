@@ -71,3 +71,44 @@ ul.tooltip {
     padding: 10px;
     box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
+
+ol#autocomplete-results, ul#autocomplete-results {
+    list-style: none;
+}
+#autocomplete-container {
+width: 300px;
+margin: 50px auto;
+}
+#autocomplete-input {
+background: white;
+-moz-appearance: none;
+-webkit-appearance: none;
+width: 100%;
+padding: 20px 15px;
+border: pink;
+outline: none;
+color: black;
+font-size: 20px;
+}
+#autocomplete-input:-webkit-placeholder {
+color: grey;
+}
+#autocomplete-input::-moz-placeholder {
+color: grey;
+}
+#autocomplete-results {
+display: none;
+width: 100%;
+margin-top: -2px;
+color: black;
+}
+#autocomplete-results li {
+width: 100%;
+padding: 7px 15px;
+border-right: 2px solid black;
+border-bottom: 2px solid black;
+border-left: 2px solid black;
+}
+#autocomplete-results li:hover {
+background:rgba(105, 111, 118, 0.8);;
+}

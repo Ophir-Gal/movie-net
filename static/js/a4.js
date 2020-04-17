@@ -1,3 +1,4 @@
+var idToTitle // declare here so it has global scope
 const TOTAL_NUM_OF_USERS = 610  // number of users in the rating data
 submitForm()  // Submit form to immediately generate viz upon webpage load
 
@@ -80,12 +81,13 @@ function submitForm(){
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
       let nearestOnly = document.getElementById('nearestOnly').checked
+      idToTitle = dataDict.idToTitleDict // need to be global scope
       let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
                                                username=username,
                                                selectedMovies=[1,2,145,318,6238,920],
                                                numUsersToProcess=numUsersToProcess,
                                                likeThreshold=likeThreshold,
-                                               idToTitle=dataDict.idToTitleDict,
+                                               idToTitle=idToTitle,
                                                nearestOnly=nearestOnly)                                              
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
@@ -93,7 +95,7 @@ function submitForm(){
   })
 }
 
-function sliderChange(value){
+function starSliderChange(value){
   let span = document.getElementById('ratingStars')
   span.innerHTML = ""
   let star_count = 0
@@ -123,6 +125,70 @@ function sliderChange(value){
 function displayNumUsers(value) {
   document.getElementById('numUsersDisplay').innerHTML = value
 }
+
+// =================== code for auto-complete movie search ====================
+
+var countries = [{"name":"Afghanistan"},{"name":"Åland Islands"},{"name":"Albania"},{"name":"Algeria"},{"name":"American Samoa"},{"name":"Andorra"},{"name":"Angola"},{"name":"Anguilla"},{"name":"Antarctica"},{"name":"Antigua and Barbuda"},{"name":"Argentina"},{"name":"Armenia"},{"name":"Aruba"},{"name":"Australia"},{"name":"Austria"},{"name":"Azerbaijan"},{"name":"Bahamas"},{"name":"Bahrain"},{"name":"Bangladesh"},{"name":"Barbados"},{"name":"Belarus"},{"name":"Belgium"},{"name":"Belize"},{"name":"Benin"},{"name":"Bermuda"},{"name":"Bhutan"},{"name":"Bolivia (Plurinational State of)"},{"name":"Bonaire, Sint Eustatius and Saba"},{"name":"Bosnia and Herzegovina"},{"name":"Botswana"},{"name":"Bouvet Island"},{"name":"Brazil"},{"name":"British Indian Ocean Territory"},{"name":"United States Minor Outlying Islands"},{"name":"Virgin Islands (British)"},{"name":"Virgin Islands (U.S.)"},{"name":"Brunei Darussalam"},{"name":"Bulgaria"},{"name":"Burkina Faso"},{"name":"Burundi"},{"name":"Cambodia"},{"name":"Cameroon"},{"name":"Canada"},{"name":"Cabo Verde"},{"name":"Cayman Islands"},{"name":"Central African Republic"},{"name":"Chad"},{"name":"Chile"},{"name":"China"},{"name":"Christmas Island"},{"name":"Cocos (Keeling) Islands"},{"name":"Colombia"},{"name":"Comoros"},{"name":"Congo"},{"name":"Congo (Democratic Republic of the)"},{"name":"Cook Islands"},{"name":"Costa Rica"},{"name":"Croatia"},{"name":"Cuba"},{"name":"Curaçao"},{"name":"Cyprus"},{"name":"Czech Republic"},{"name":"Denmark"},{"name":"Djibouti"},{"name":"Dominica"},{"name":"Dominican Republic"},{"name":"Ecuador"},{"name":"Egypt"},{"name":"El Salvador"},{"name":"Equatorial Guinea"},{"name":"Eritrea"},{"name":"Estonia"},{"name":"Ethiopia"},{"name":"Falkland Islands (Malvinas)"},{"name":"Faroe Islands"},{"name":"Fiji"},{"name":"Finland"},{"name":"France"},{"name":"French Guiana"},{"name":"French Polynesia"},{"name":"French Southern Territories"},{"name":"Gabon"},{"name":"Gambia"},{"name":"Georgia"},{"name":"Germany"},{"name":"Ghana"},{"name":"Gibraltar"},{"name":"Greece"},{"name":"Greenland"},{"name":"Grenada"},{"name":"Guadeloupe"},{"name":"Guam"},{"name":"Guatemala"},{"name":"Guernsey"},{"name":"Guinea"},{"name":"Guinea-Bissau"},{"name":"Guyana"},{"name":"Haiti"},{"name":"Heard Island and McDonald Islands"},{"name":"Holy See"},{"name":"Honduras"},{"name":"Hong Kong"},{"name":"Hungary"},{"name":"Iceland"},{"name":"India"},{"name":"Indonesia"},{"name":"Côte d'Ivoire"},{"name":"Iran (Islamic Republic of)"},{"name":"Iraq"},{"name":"Ireland"},{"name":"Isle of Man"},{"name":"Israel"},{"name":"Italy"},{"name":"Jamaica"},{"name":"Japan"},{"name":"Jersey"},{"name":"Jordan"},{"name":"Kazakhstan"},{"name":"Kenya"},{"name":"Kiribati"},{"name":"Kuwait"},{"name":"Kyrgyzstan"},{"name":"Lao People's Democratic Republic"},{"name":"Latvia"},{"name":"Lebanon"},{"name":"Lesotho"},{"name":"Liberia"},{"name":"Libya"},{"name":"Liechtenstein"},{"name":"Lithuania"},{"name":"Luxembourg"},{"name":"Macao"},{"name":"Macedonia (the former Yugoslav Republic of)"},{"name":"Madagascar"},{"name":"Malawi"},{"name":"Malaysia"},{"name":"Maldives"},{"name":"Mali"},{"name":"Malta"},{"name":"Marshall Islands"},{"name":"Martinique"},{"name":"Mauritania"},{"name":"Mauritius"},{"name":"Mayotte"},{"name":"Mexico"},{"name":"Micronesia (Federated States of)"},{"name":"Moldova (Republic of)"},{"name":"Monaco"},{"name":"Mongolia"},{"name":"Montenegro"},{"name":"Montserrat"},{"name":"Morocco"},{"name":"Mozambique"},{"name":"Myanmar"},{"name":"Namibia"},{"name":"Nauru"},{"name":"Nepal"},{"name":"Netherlands"},{"name":"New Caledonia"},{"name":"New Zealand"},{"name":"Nicaragua"},{"name":"Niger"},{"name":"Nigeria"},{"name":"Niue"},{"name":"Norfolk Island"},{"name":"Korea (Democratic People's Republic of)"},{"name":"Northern Mariana Islands"},{"name":"Norway"},{"name":"Oman"},{"name":"Pakistan"},{"name":"Palau"},{"name":"Palestine, State of"},{"name":"Panama"},{"name":"Papua New Guinea"},{"name":"Paraguay"},{"name":"Peru"},{"name":"Philippines"},{"name":"Pitcairn"},{"name":"Poland"},{"name":"Portugal"},{"name":"Puerto Rico"},{"name":"Qatar"},{"name":"Republic of Kosovo"},{"name":"Réunion"},{"name":"Romania"},{"name":"Russian Federation"},{"name":"Rwanda"},{"name":"Saint Barthélemy"},{"name":"Saint Helena, Ascension and Tristan da Cunha"},{"name":"Saint Kitts and Nevis"},{"name":"Saint Lucia"},{"name":"Saint Martin (French part)"},{"name":"Saint Pierre and Miquelon"},{"name":"Saint Vincent and the Grenadines"},{"name":"Samoa"},{"name":"San Marino"},{"name":"Sao Tome and Principe"},{"name":"Saudi Arabia"},{"name":"Senegal"},{"name":"Serbia"},{"name":"Seychelles"},{"name":"Sierra Leone"},{"name":"Singapore"},{"name":"Sint Maarten (Dutch part)"},{"name":"Slovakia"},{"name":"Slovenia"},{"name":"Solomon Islands"},{"name":"Somalia"},{"name":"South Africa"},{"name":"South Georgia and the South Sandwich Islands"},{"name":"Korea (Republic of)"},{"name":"South Sudan"},{"name":"Spain"},{"name":"Sri Lanka"},{"name":"Sudan"},{"name":"Suriname"},{"name":"Svalbard and Jan Mayen"},{"name":"Swaziland"},{"name":"Sweden"},{"name":"Switzerland"},{"name":"Syrian Arab Republic"},{"name":"Taiwan"},{"name":"Tajikistan"},{"name":"Tanzania, United Republic of"},{"name":"Thailand"},{"name":"Timor-Leste"},{"name":"Togo"},{"name":"Tokelau"},{"name":"Tonga"},{"name":"Trinidad and Tobago"},{"name":"Tunisia"},{"name":"Turkey"},{"name":"Turkmenistan"},{"name":"Turks and Caicos Islands"},{"name":"Tuvalu"},{"name":"Uganda"},{"name":"Ukraine"},{"name":"United Arab Emirates"},{"name":"United Kingdom of Great Britain and Northern Ireland"},{"name":"United States of America"},{"name":"Uruguay"},{"name":"Uzbekistan"},{"name":"Vanuatu"},{"name":"Venezuela (Bolivarian Republic of)"},{"name":"Viet Nam"},{"name":"Wallis and Futuna"},{"name":"Western Sahara"},{"name":"Yemen"},{"name":"Zambia"},{"name":"Zimbabwe"}];
+console.log(countries);
+
+countries.map(function(element, index) {
+  countries[index] = element.name;
+});
+
+// variables
+var input = document.getElementById("autocomplete-input");
+var results, countries_to_show = [];
+var autocomplete_results = document.getElementById("autocomplete-results");
+
+// functions
+function autocomplete(val) {
+  var countries_returned = [];
+
+  for (i = 0; i < countries.length; i++) {
+    if (val === countries[i].toLowerCase().slice(0, val.length)) {
+      countries_returned.push(countries[i]);
+    }
+  }
+
+  return countries_returned;
+}
+
+// events
+input.onkeyup = function(e) {
+  input_val = this.value.toLowerCase();
+
+  if (input_val.length > 0) {
+    autocomplete_results.innerHTML = "";
+    countries_to_show = autocomplete(input_val);
+
+    for (i = 0; i < countries_to_show.length; i++) {
+      autocomplete_results.innerHTML +=
+        "<li id=" +
+        countries_to_show[i] +
+        ' class="list-item">' +
+        countries_to_show[i] +
+        "</li>";
+    }
+    autocomplete_results.style.display = "block";
+  } else {
+    countries_to_show = [];
+    autocomplete_results.innerHTML = "";
+  }
+};
+
+// Get the element, add a click listener...
+document
+  .getElementById("autocomplete-results")
+  .addEventListener("click", function(e) {
+    // e.target is the clicked element!
+    // If it was a list item
+    if (e.target && e.target.nodeName == "LI") {
+      // List item found!  Output the value!
+      console.log(e.target.innerHTML);
+      input.value = e.target.innerHTML;
+      autocomplete_results.innerHTML = null; //empty the value
+    }
+  });
 
 /*
  * ============================================================================
