@@ -16,15 +16,15 @@
     <tr>
       <td id="formColumn">
         <!-- form for user inputs -->
-        <form action="javascript: submitForm()">
+        <form action="javascript: submitForm()" onchange="submitForm()">
           <label for="username">Name:</label><br>
           <input type="text" name="username" autofocus="true" placeholder="Jane" id="username">
           <br><br>
           <label for="vol">"Like" Threshold:</label><br>
           <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
-          step="0.5" value="3.5" 
+          step="0.5" value="3.5"
           onmousemove="sliderChange(Number(document.getElementById('likeThreshold').value))">
-          <span>&nbsp;&nbsp;</span>
+          <br>
           <span id="ratingStars">
             <span class="fa fa-star my-star-icon"></span>
             <span class="fa fa-star my-star-icon"></span>
@@ -33,17 +33,32 @@
             <span class="fa fa-star-o my-star-icon"></span>
           </span>
           <br><br>
-          <label for="numUsers">Number of Users to Process:</label><br>
-          <input type="range" id="numUsers" name="numUsers" min="0" max="10"
-          step="1" value="10" onmousemove="">
+          <label for="numUsers">Number of Users to Process:
+            <span id="numUsersDisplay">10</span>
+          </label><br>
+          <input type="range" id="numUsers" name="numUsers" min="0" max="610"
+          step="1" value="10" onmousemove="displayNumUsers(document.getElementById('numUsers').value)">
           <br><br>
           <label for="movieTitle">Movie Title:</label><br>
           <input type="text" name="movieTitle" placeholder="Toy Story" id="movieTitle">
           <br><br>
-          <input type="submit" value="Render Network">
+          <div>
+            <ul id="selectedMovies">
+              <li>Toy Story (1995)</li>
+              <li>Shawshank Redemption, The (1994)</li>
+              <li>Green Card (1990)</li>
+              <li>Gone with the Wind (1939)</li>
+              <li>Bad Boys (1995)</li>
+              <li>Jumanji (1995)</li>
+            </ul>
+          </div> 
+          <br><br>
+          <input type="checkbox" id="nearestOnly" name="nearestOnly" checked>
+          <label for="nearestOnly"> Nearest Neighbors Only</label><br>
+          <!-- <input type="submit" value="Render Network"> -->
         </form>
       </td>
-      <td id="visColumn">
+      <td id="vizColumn">
         <!-- svg where the graph will take place -->
         <svg id="viz"></svg>
       </td>
@@ -99,43 +114,46 @@
   </div>
   
   <h2 class="u_title">An Overview of My Development Process</h2>
-  <table>
+  <table id="btmTable">
     <tr>
-      <th>Component</th><th>Estimated Time Spent</th>
+      <th>Component</th><th>Estimated Time Spent (hours)</th>
     </tr>
     <tr>
-      <td>Came up with design idea</td><td>6-8 hours</td>  
+      <td>Came up with design idea</td><td>6-8</td>  
     </tr>
     <tr>
-      <td>Searched for a public data set online</td><td>1 hours</td>
+      <td>Searched for a public data set online</td><td>1</td>
     </tr>
     <tr>
-      <td>Learned to create an interactive network using D3</td><td>5 hours</td>
+      <td>Learned to create an interactive network using D3</td><td>5</td>
     </tr>
     <tr>
-      <td>Processed data to fit with framework (parsed csv and joined data tables)</td><td>1 hours</td>
+      <td>Processed data to fit with framework (parsed csv and joined data tables)</td><td>1</td>
     </tr>
     <tr>
-      <td>Developed code to create a network based on user's movie selection</td><td>2 hours</td>
+      <td>Developed code to create a network based on user's movie selection</td><td>2</td>
     </tr>
     <tr>
-      <td>Added visual encodings (marks, tooltips, colors)</td><td>6 hours</td>
+      <td>Added visual encodings (marks, tooltips, colors)</td><td>6</td>
     </tr>
     <tr>
-      <td>Debugging...</td><td>6-8 hours</td>
+      <td>Debugging...</td><td>8-12</td>
     </tr>
     <tr>
-      <td>Added movie-selection functionality</td><td>? hours</td>
+      <td>Added basic form for user input</td><td>6-8</td>
     </tr>
     <tr>
-      <td>Developed code to enable user to choose number of neighbors</td><td>? hours</td>
+      <td>Added option to see nearest neighbors only</td><td>1</td>
+    </tr>
+    <tr>
+      <td>Added movie search auto-complete functionality</td><td>4</td>
     </tr>
     <tr>
       <td>Added functionality of jumping to a neighbor's network (by updating the
-      network dynamically)</td><td>? hours</td>
+      network dynamically)</td><td>4</td>
     </tr>
     <tr>
-      <th>Total </th><th>? hours</th>
+      <th>Total </th><th> ??-??</th>
     </tr>
   </table>
   <svg id="user-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="0px" height="0px">

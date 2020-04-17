@@ -19,17 +19,18 @@ function findUndirectedEdge(links, target, source){
 
 function extractNodesAndLinks(ratingData,
                               username="User",
-                              selectedMovies=[1,318,6238,920],
+                              selectedMovies=[1,2,145,318,6238,920],
                               numUsersToProcess=10,
                               likeThreshold=0,
-                              idToTitle) {
+                              idToTitle,
+                              nearestOnly=true) {
   let nodes = []
   let links = []
   for (let i=0; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
     let userId = i === 0 ? username : i
     nodes.push({"id": userId})
     for (let d of ratingData){
-      if (d["id"] === userId) {
+      if (d["id"] === userId || d["id"] < i) {
         continue
       } else if(d["id"] <= numUsersToProcess
                 && d["rating"] >= likeThreshold
@@ -44,6 +45,15 @@ function extractNodesAndLinks(ratingData,
       }
     }
     console.log('finished with user:', userId)
+    if (nearestOnly) {  // if want to se nearest neighbors only
+      for (let i=1; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
+        let found = findUndirectedEdge(links, target=userId, source=i)
+        if (found) {
+          nodes.push({"id": i})
+        }
+      }
+      break; // stop constructing the network
+    }
   }
   return {"nodes":nodes, "links":links}
 }
@@ -69,12 +79,14 @@ function submitForm(){
       username = username === "" ? "Jane" : username
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
+      let nearestOnly = document.getElementById('nearestOnly').checked
       let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
                                                username=username,
-                                               selectedMovies=[1,318,6238,920],
+                                               selectedMovies=[1,2,145,318,6238,920],
                                                numUsersToProcess=numUsersToProcess,
                                                likeThreshold=likeThreshold,
-                                               idToTitle=dataDict.idToTitleDict)                                              
+                                               idToTitle=dataDict.idToTitleDict,
+                                               nearestOnly=nearestOnly)                                              
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))
@@ -106,6 +118,10 @@ function sliderChange(value){
       span.appendChild(empty_star)
       star_count++
   }
+}
+
+function displayNumUsers(value) {
+  document.getElementById('numUsersDisplay').innerHTML = value
 }
 
 /*
@@ -154,7 +170,7 @@ function renderNetworkViz(nodes, links, username) {
   document.getElementById("viz").innerHTML = "";
 
   // Define width and height for SVG/visualization
-  var width = window.innerWidth/1.1
+  var width = window.innerWidth/1.1 * 0.75
   var height = window.innerHeight/1.25
   
   // Select svg from DOM
@@ -167,7 +183,7 @@ function renderNetworkViz(nodes, links, username) {
   var linkForce = d3
     .forceLink()
     .id(function (link) { return link.id })
-    .strength(function (link) { return 0.01 / nodes.length })
+    .strength(function (link) { return (0.001 * nodes.length) })
   
   // Set up simulation
   var simulation = d3
