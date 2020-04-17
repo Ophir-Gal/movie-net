@@ -65,12 +65,14 @@ function submitForm(){
   fetch('http://localhost:8080/').then(function(response) { 
     response.json()
     .then(dataDict => {
-      let username = "Some Name" // TODO - get name from form
-      let likeThreshold=Number(document.getElementById('likeThreshold').value)
+      let username = document.getElementById('username').value
+      username = username === "" ? "Jane" : username
+      let likeThreshold = Number(document.getElementById('likeThreshold').value)
+      let numUsersToProcess = Number(document.getElementById('numUsers').value)
       let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
                                                username=username,
                                                selectedMovies=[1,318,6238,920],
-                                               numUsersToProcess=10,
+                                               numUsersToProcess=numUsersToProcess,
                                                likeThreshold=likeThreshold,
                                                idToTitle=dataDict.idToTitleDict)                                              
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)

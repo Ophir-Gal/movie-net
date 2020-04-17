@@ -12,31 +12,44 @@
   <h1>Assignment 4: Implementing Interactions in D3.js</h1>
   <i><h3>Created By: Ophir Gal</h3></i>
   <h2 class="u_title">Visualization</h2>
-  <!-- form for user inputs -->
-  <form action="javascript: submitForm()">
-    <label for="username">Name:</label><br>
-    <input type="text" name="username" placeholder="Jane Doe" id="username">
-    <br><br>
-    <label for="vol">"Like" Threshold:</label><br>
-    <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
-    step="0.5" value="3.5" 
-    onmousemove="sliderChange(Number(document.getElementById('likeThreshold').value))">
-    <span>&nbsp;&nbsp;</span>
-    <span id="ratingStars">
-      <span class="fa fa-star my-star-icon"></span>
-      <span class="fa fa-star my-star-icon"></span>
-      <span class="fa fa-star my-star-icon"></span>
-      <span class="fa fa-star-half-full my-star-icon"></span>
-      <span class="fa fa-star-o my-star-icon"></span>
-    </span>
-    <br><br>
-    <label for="movieTitle">Movie Title:</label><br>
-    <input type="text" name="movieTitle" placeholder="Toy Story" id="movieTitle">
-    <br><br>
-    <input type="submit" value="Render Network">
-  </form>
-  <!-- div where the graph will take place -->
-  <svg id="viz"></svg>
+  <table id="mainTable">
+    <tr>
+      <td id="formColumn">
+        <!-- form for user inputs -->
+        <form action="javascript: submitForm()">
+          <label for="username">Name:</label><br>
+          <input type="text" name="username" autofocus="true" placeholder="Jane" id="username">
+          <br><br>
+          <label for="vol">"Like" Threshold:</label><br>
+          <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
+          step="0.5" value="3.5" 
+          onmousemove="sliderChange(Number(document.getElementById('likeThreshold').value))">
+          <span>&nbsp;&nbsp;</span>
+          <span id="ratingStars">
+            <span class="fa fa-star my-star-icon"></span>
+            <span class="fa fa-star my-star-icon"></span>
+            <span class="fa fa-star my-star-icon"></span>
+            <span class="fa fa-star-half-full my-star-icon"></span>
+            <span class="fa fa-star-o my-star-icon"></span>
+          </span>
+          <br><br>
+          <label for="numUsers">Number of Users to Process:</label><br>
+          <input type="range" id="numUsers" name="numUsers" min="0" max="10"
+          step="1" value="10" onmousemove="">
+          <br><br>
+          <label for="movieTitle">Movie Title:</label><br>
+          <input type="text" name="movieTitle" placeholder="Toy Story" id="movieTitle">
+          <br><br>
+          <input type="submit" value="Render Network">
+        </form>
+      </td>
+      <td id="visColumn">
+        <!-- svg where the graph will take place -->
+        <svg id="viz"></svg>
+      </td>
+    </tr>
+  </table>
+  
   <div class="p">
     <p>
       <h2 class="u_title">The Rationale for My Design</h2>

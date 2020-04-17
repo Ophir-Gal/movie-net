@@ -2,12 +2,29 @@ body {
     margin: 0 auto;
     width: 90%;
 }
-table, th, td {
+#viz {
+    width: 100%;
+}
+#mainTable, th, td {
+    border: 1px solid black;
+}
+#mainTable {
+    width: 100% !important;
+    border: 1px solid black;
+}
+#vizColumn {
+    width: 75% !important;
+}
+#formColumn {
+    width: 25% !important;
+    padding: 25px; 
+}
+/*table, th, td {
     border: 1px solid black;
     min-width: 75%;
     max-width: 75%;
     text-align: center;
-}
+}*/
 .p {
     max-width: 600px;
 }
