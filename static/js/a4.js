@@ -1,19 +1,84 @@
-var nodes, links // give those variables a global scope
-// Fetch data from the server and render visualization
-fetch('http://localhost:8080/').then(function(response) { 
-  response.json().then(data => { 
-    nodes = data.nodes
-    links = data.links
-    renderNetworkViz(nodes, links)
-  })
-  .catch(e => console.log(e))
-})
+const TOTAL_NUM_OF_USERS = 610  // number of users in the rating data
+submitForm()  // Submit form to immediately generate viz upon webpage load
+
+/*
+ * ============================================================================
+ * ================== Begin Data Processing Functions =====================
+ * ============================================================================
+ */
+
+function findUndirectedEdge(links, target, source){
+  for (let link of links){
+    if ((link["target"] === target && link["source"] === source) ||
+        (link["target"] === source && link["source"] === target)) {
+          return link
+        }
+  }
+  return false
+}
+
+function extractNodesAndLinks(ratingData,
+                              username="User",
+                              selectedMovies=[1,318,6238,920],
+                              numUsersToProcess=10,
+                              likeThreshold=0,
+                              idToTitle) {
+  let nodes = []
+  let links = []
+  for (let i=0; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
+    let userId = i === 0 ? username : i
+    nodes.push({"id": userId})
+    for (let d of ratingData){
+      if (d["id"] === userId) {
+        continue
+      } else if(d["id"] <= numUsersToProcess
+                && d["rating"] >= likeThreshold
+                && selectedMovies.includes(d["movieId"])){
+        let found = findUndirectedEdge(links, target=userId, source=d["id"])
+        let movieTitle = idToTitle[String(d["movieId"])].title
+        if (found && (!found["movies"].includes(movieTitle))){
+          found["movies"].push(movieTitle) 
+        } else {
+          links.push({"target":userId, "source":d["id"], "movies":[movieTitle]})
+        }
+      }
+    }
+    console.log('finished with user:', userId)
+  }
+  return {"nodes":nodes, "links":links}
+}
+
+/*
+ * ============================================================================
+ * ================== End Data Processing Functions =====================
+ * ============================================================================
+ */
 
 /*
  * ============================================================================
  * ================== Begin Form Event Handling Functions =====================
  * ============================================================================
  */
+
+function submitForm(){
+  // Fetch data from the server and render visualization
+  fetch('http://localhost:8080/').then(function(response) { 
+    response.json()
+    .then(dataDict => {
+      let username = "Some Name" // TODO - get name from form
+      let likeThreshold=Number(document.getElementById('likeThreshold').value)
+      let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
+                                               username=username,
+                                               selectedMovies=[1,318,6238,920],
+                                               numUsersToProcess=10,
+                                               likeThreshold=likeThreshold,
+                                               idToTitle=dataDict.idToTitleDict)                                              
+      renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
+    })
+    .catch(e => console.log(e))
+  })
+}
+
 function sliderChange(value){
   let span = document.getElementById('ratingStars')
   span.innerHTML = ""
@@ -53,20 +118,6 @@ function sliderChange(value){
  * ============================================================================
  */
 
-function getNeighbors(node) {
-  // notice - links is a global variable here
-  return links.reduce(function (neighbors, link) {
-      if (link.target.id === node.id) {
-        neighbors.push(link.source.id)
-      } else if (link.source.id === node.id) {
-        neighbors.push(link.target.id)
-      }
-      return neighbors
-    },
-    [node.id]
-  )
-}
-
 function isNeighborLink(node, link) {
   return link.target.id === node.id || link.source.id === node.id
 }
@@ -75,7 +126,7 @@ function getNodeColor(node, neighbors) {
   if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
     return neighbors.indexOf(node.id) === 0 ? 'blue' : 'green'
   }
-  return node.id === "User" ? 'black' : 'gray'
+  return node.id === username ? 'black' : 'gray'
 }
 
 function getLinkColor(node, link) {
@@ -96,10 +147,9 @@ function getLinkColor(node, link) {
  * ============================= Main Function ================================
  * ============================================================================
  */
-function renderNetworkViz(nodes, links) {
-  // give parameters a global scope
-  var nodes = nodes
-  var links = links
+function renderNetworkViz(nodes, links, username) {
+  // Remove potential pre-existing chart
+  document.getElementById("viz").innerHTML = "";
 
   // Define width and height for SVG/visualization
   var width = window.innerWidth/1.1
@@ -156,6 +206,21 @@ function renderNetworkViz(nodes, links) {
       })
 
   dragHandler(svg.selectAll("use"))
+
+  // local utility funciton to get neighbors of node (needs to be local)
+  function getNeighbors(node) {
+    // notice - links is a global variable here
+    return links.reduce(function (neighbors, link) {
+        if (link.target.id === node.id) {
+          neighbors.push(link.source.id)
+        } else if (link.source.id === node.id) {
+          neighbors.push(link.target.id)
+        }
+        return neighbors
+      },
+      [node.id]
+    )
+  }
   
   // Create Node Labels
   var nodeLabels = svg.append("g")
@@ -183,7 +248,7 @@ function renderNetworkViz(nodes, links) {
   // Define when not hovering over node anymore
   function mouseOutNode(selectedNode) {
     // we modify the styles to not highlight selected nodes
-    nodeElements.attr('fill', node => node.id === "User" ? 'black' : 'gray')
+    nodeElements.attr('fill', node => node.id === username ? 'black' : 'gray')
     nodeLabels.attr('fill', 'white')
     linkElements.attr('stroke', '#E5E5E5')
   }
@@ -194,8 +259,8 @@ function renderNetworkViz(nodes, links) {
   .style("opacity", 0)
 
   function mouseOverLink(link) {
-    let person1 = link.source.id === "User" ? "User" : "person " + link.source.id
-    let person2 = link.target.id === "User" ? "User" : "person " + link.target.id
+    let person1 = link.source.id === username ? username : "person " + link.source.id
+    let person2 = link.target.id === username ? username : "person " + link.target.id
     tooltip
       .style("opacity", 1)
       .html(`<ul class='tooltip'><strong>Movies liked by ${person1} and ${person2}:</strong>
@@ -210,7 +275,6 @@ function renderNetworkViz(nodes, links) {
         .style("opacity", 0)
   }
 
-  
   // Create Link Labels
   var linkLabels = svg.append("g")
     .attr("class", "texts")
