@@ -71,6 +71,10 @@ ul.tooltip {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    font-size: 10pt;
+    -moz-box-shadow:    inset 0 0 5px black;
+    -webkit-box-shadow: inset 0 0 5px black;
+    box-shadow:         inset 0 0 5px black;
 }
 
 ol#autocomplete-results, ul#autocomplete-results {
@@ -84,6 +88,9 @@ input.typed {
     padding: 4px;
     -webkit-appearance: none;
     width: 100%;
+}
+#username {
+    width: 70%;
 }
 #autocomplete-input:-webkit-placeholder {
     color: grey;

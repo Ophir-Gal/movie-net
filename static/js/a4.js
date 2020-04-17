@@ -24,7 +24,8 @@ function extractNodesAndLinks(ratingData,
                               numUsersToProcess=10,
                               likeThreshold=0,
                               idToTitle,
-                              nearestOnly=true) {
+                              nearestOnly=true,
+                              centerPerson=0) {
   let nodes = []
   let links = []
   for (let i=0; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
@@ -71,7 +72,7 @@ function extractNodesAndLinks(ratingData,
  * ============================================================================
  */
 
-function submitForm(){
+function submitForm(centerPerson=0){
   // Fetch data from the server and render visualization
   fetch('http://localhost:8080/').then(function(response) { 
     response.json()
@@ -90,7 +91,8 @@ function submitForm(){
                                                numUsersToProcess=numUsersToProcess,
                                                likeThreshold=likeThreshold,
                                                idToTitle=idToTitle,
-                                               nearestOnly=nearestOnly)                                              
+                                               nearestOnly=nearestOnly,
+                                               centerPerson=centerPerson)                                              
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))
@@ -284,6 +286,7 @@ function renderNetworkViz(nodes, links, username) {
     .attr("fill", getNodeColor)
     .on('mouseover', mouseOverNode)
     .on('mouseout', mouseOutNode)
+    .on("dblclick", node => submitForm(centerPerson=node.id));
 
   // Handle drag events
   var dragHandler = d3.drag()
