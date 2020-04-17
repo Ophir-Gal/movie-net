@@ -18,7 +18,7 @@
         <!-- form for user inputs -->
         <form action="javascript: submitForm()" onchange="submitForm()">
           <label for="username">Name:</label><br>
-          <input id="username" type="text" name="username" autofocus="true" placeholder="Jane">
+          <input id="username" class="typed" type="text" name="username" autofocus="true" placeholder="Jane">
           <br><br>
           <label for="vol">"Like" Threshold:</label><br>
           <input type="range" id="likeThreshold" name="likeThreshold" min="0" max="5"
@@ -42,7 +42,7 @@
           <label for="movieTitle">Select Movies:</label><br>
           <span id="autocomplete-container">
             <input id="autocomplete-movieInput" type="text" name="movieTitle" 
-             placeholder="Search by title..." autocomplete="off"/>
+             placeholder="Search by title..." class="typed" autocomplete="off"/>
             <ul id="autocomplete-results">              
             </ul>
           </span>          
@@ -151,6 +151,9 @@
     </tr>
     <tr>
       <td>Added movie search auto-complete functionality</td><td>4</td>
+    </tr>
+    <tr>
+      <td>Made it so you only see the top N "best" neighbors</td><td>??</td>
     </tr>
     <tr>
       <td>Added functionality of jumping to a neighbor's network (by updating the

@@ -55,10 +55,6 @@ ul.tooltip {
     color: orange;
     font-size: 30px !important;
 }
-#username {
-    width: 100%;
-    -webkit-appearance: none;
-}
 #ratingStars {
     font-size: 0px;
 }
@@ -83,11 +79,10 @@ ol#autocomplete-results, ul#autocomplete-results {
     width: 100%;
     margin: auto;
 }
-#autocomplete-movieInput {
-    background: white;
+input.typed {
+    padding: 4px;
     -webkit-appearance: none;
     width: 100%;
-    color: black;
 }
 #autocomplete-input:-webkit-placeholder {
     color: grey;
