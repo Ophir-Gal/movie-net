@@ -56,7 +56,7 @@
               <li class="selected-movie">Bad Boys (1995)</li>
               <li class="selected-movie">Jumanji (1995)</li>
             </ul>
-            <input type="button" value="Clear Movie List"
+            <input type="submit" value="Clear Movie List"
              onclick="document.getElementById('selectedMovies').innerHTML=''; 
                       submitForm()">
           </div> 
@@ -70,6 +70,31 @@
   </table>
   
   <div class="p">
+    <p>
+      <h2 class="u_title">Quick How-To Guide</h2>
+      <ul>
+        <li>The parameters to the left of the visualization should be
+          self-explanatory.</li>
+        <li>You can select movies by typing a part of the name (at least 3
+          letters) and clicking on
+          a movie from the drop-down list.</li>
+        <li>The visualization reacts to changes applied to the
+          parameter widgets.</li>
+        <li>Once you are satisfied with the values, you can move on to
+          interact with the visualization itself.</li>
+        <li>If you hover over a node, you will see it lighting up in blue, and
+        the direct neighbors lighting up in green (this would have been more useful
+        had I chosen to show more links/connections in the graph, but I decided
+        it would be redundant).</li>
+        <li>If you hover over a link (the camera symbol), you will see a
+        tooltip with the list of movies liked by the associated nodes.</li>
+        <li>You can drag and drop nodes to change their position.</li>
+        <li>Lastly, the best feature of the visualization is being able to jump
+        from the user's network to a neighbor's network. This is done by
+        double clicking on a node.</li>
+      </ul>
+         
+    </p>
     <p>
       <h2 class="u_title">The Rationale for My Design</h2>
       <h3>How I Chose My Particular Visual Encodings and Interaction
@@ -105,16 +130,6 @@
     Permalink:
     <a href="https://grouplens.org/datasets/movielens/latest/">
       https://grouplens.org/datasets/movielens/latest/</a>
-
-    <!--I chose the <strong>MovieLens 25M Dataset</strong>. It contains 25 million 
-    ratings and one million tag applications applied to 62,000 movies by 
-    162,000 users. It was released in December 2019.
-
-    Permalink:
-    <a href="https://grouplens.org/datasets/movielens/25m/">
-      https://grouplens.org/datasets/movielens/25m/</a>      
-    -->
-
   </div>
   
   <h2 class="u_title">An Overview of My Development Process</h2>
@@ -163,7 +178,7 @@
       <td>Debugging...</td><td>4-8</td>
     </tr>
     <tr>
-      <th>Total </th><th> ??-??</th>
+      <th>Total </th><th> 55-67</th>
     </tr>
   </table>
   <svg id="user-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="0px" height="0px">

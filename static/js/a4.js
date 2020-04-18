@@ -20,8 +20,7 @@ function findUndirectedEdge(links, target, source){
 
 function extractGraph(ratingData, username="User",
                       selectedMovies=[1,2,145,318,920,6238],
-                      numSimilarUsers=10, likeThreshold=0,
-                      idToTitle, centerPerson=0) {
+                      likeThreshold=0, idToTitle, centerPerson=0) {
   let nodes = []
   let links = []
 
@@ -41,7 +40,6 @@ function extractGraph(ratingData, username="User",
       }
     }
     var originalUsername = username  // add the user's node
-    console.log(username)
     // replace user's username with centerPerson's id (treat them as the user)
     username = centerPerson
   }
@@ -77,12 +75,16 @@ function extractGraph(ratingData, username="User",
   return {"nodes":nodes, "links":links}
 }
 
-function keepBest_K_Neighbors(k, links) {
+function keepBest_K_Neighbors(k, links, username) {
   let nodeIDs = []
   let linksToReturn = []
   
-  // Add the center node first so it's centered!!
-  nodeIDs.push(links[0].target)
+  // Add the center node first so it's centered!! (if there are links)
+  if (links.length > 0) {
+    nodeIDs.push(links[0].target)
+  } else {
+    return {"nodes":[{"id":username}], "links":[]}
+  }
 
   for (let i=0; i<k; i++) {
     // find most similar neighbor (most shared movies) and store locally
@@ -139,11 +141,12 @@ function submitForm(centerPerson=0){
       var nodesAndLinks = extractGraph(dataDict.ratingData,
                                         username,
                                         selectedMovies,
-                                        numSimilarUsers,
                                         likeThreshold,
                                         idToTitle,
                                         centerPerson)
-      nodesAndLinks = keepBest_K_Neighbors(numSimilarUsers, nodesAndLinks.links)
+      nodesAndLinks = keepBest_K_Neighbors(numSimilarUsers, 
+                                           nodesAndLinks.links,
+                                           username)
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))
@@ -262,20 +265,9 @@ function isNeighborLink(node, link) {
   return link.target.id === node.id || link.source.id === node.id
 }
 
-function getNodeColor(node, neighbors) {
-  if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
-    return neighbors.indexOf(node.id) === 0 ? 'blue' : 'green'
-  }
-  return node.id === username ? 'black' : 'gray'
-}
-
 function getLinkColor(node, link) {
   return isNeighborLink(node, link) ? 'green' : '#E5E5E5'
 }
-
-/*function getTextColor(node, neighbors) {
-  return Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1 ? 'white' : 'black'
-}*/
 
 /**
  * ============================================================================
@@ -293,7 +285,7 @@ function renderNetworkViz(nodes, links, username) {
 
   // Define width and height for SVG/visualization
   var width = window.innerWidth/1.1 * 0.75
-  var height = window.innerHeight/1.25
+  var height = window.innerHeight/1.15
   
   // Select svg from DOM
   var svg = d3.select('svg')
@@ -361,6 +353,14 @@ function renderNetworkViz(nodes, links, username) {
       },
       [node.id]
     )
+  }
+
+  // local utility funciton to get node color (needs to be local)
+  function getNodeColor(node, neighbors) {
+    if (Array.isArray(neighbors) && neighbors.indexOf(node.id) > -1) {
+      return neighbors.indexOf(node.id) === 0 ? 'blue' : 'green'
+    }
+    return node.id === username ? 'black' : 'gray'
   }
   
   // Create Node Labels
