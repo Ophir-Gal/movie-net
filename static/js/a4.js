@@ -20,7 +20,7 @@ function findUndirectedEdge(links, target, source){
 
 function extractGraph(ratingData, username="User",
                       selectedMovies=[1,2,145,318,920,6238],
-                      numUsersToProcess=10, likeThreshold=0,
+                      numSimilarUsers=10, likeThreshold=0,
                       idToTitle, centerPerson=0) {
   let nodes = []
   let links = []
@@ -59,7 +59,6 @@ function extractGraph(ratingData, username="User",
         links.push({"target":username, "source":d["id"], "movies":[movieTitle]})
       }
     }
-    if (d["id"] >= numUsersToProcess) break
   }
   
   nodes.push({"id": username})  // add user first so that they're centered
@@ -67,7 +66,7 @@ function extractGraph(ratingData, username="User",
   if (findUndirectedEdge(links, target=username, source=originalUsername)) {
     nodes.push({"id": originalUsername})
   }
-  for (let i=1; i<= numUsersToProcess; i++){//TOTAL_NUM_OF_USERS; i++){
+  for (let i=1; i<=TOTAL_NUM_OF_USERS; i++){
     let found = findUndirectedEdge(links, target=username, source=i)
     if (found) {
       nodes.push({"id": i})
@@ -76,6 +75,41 @@ function extractGraph(ratingData, username="User",
   console.log('finished with user:', username)
 
   return {"nodes":nodes, "links":links}
+}
+
+function keepBest_K_Neighbors(k, links) {
+  let nodeIDs = []
+  let linksToReturn = []
+  
+  // Add the center node first so it's centered!!
+  nodeIDs.push(links[0].target)
+
+  for (let i=0; i<k; i++) {
+    // find most similar neighbor (most shared movies) and store locally
+    let bestNeighborId = undefined
+    let bestLink = undefined
+    let maxMovies = 0
+    for (let link of links) {
+      if (link.movies.length >= maxMovies && (!nodeIDs.includes(link.source))) {
+        maxMovies = link.movies.length
+        bestNeighborId = link.source
+        bestLink = link
+      }
+    }
+    // Store node and link if found any
+    if (bestNeighborId) {
+      nodeIDs.push(bestNeighborId)
+      linksToReturn.push(bestLink)
+    }
+  }
+
+  // convert nodeIDs to needed format
+  let nodesToReturn = []
+  for (let nodeId of nodeIDs) {
+    nodesToReturn.push({"id":nodeId})
+  }
+  
+  return {"nodes":nodesToReturn, "links":linksToReturn}
 }
 
 /*
@@ -98,17 +132,18 @@ function submitForm(centerPerson=0){
       let username = document.getElementById('username').value
       username = username === "" ? "Jane" : username
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
-      let numUsersToProcess = Number(document.getElementById('numUsers').value)
+      let numSimilarUsers = Number(document.getElementById('numSimilarUsers').value)
       idToTitle = dataDict.idToTitleDict  // need to be global scope
       titleToId = dataDict.titleToIdDict  // need to be global scope
       let selectedMovies = getSelectedMovieIDs()
       var nodesAndLinks = extractGraph(dataDict.ratingData,
                                         username,
                                         selectedMovies,
-                                        numUsersToProcess,
+                                        numSimilarUsers,
                                         likeThreshold,
                                         idToTitle,
                                         centerPerson)
+      nodesAndLinks = keepBest_K_Neighbors(numSimilarUsers, nodesAndLinks.links)
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))

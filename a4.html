@@ -33,11 +33,11 @@
             <span class="fa fa-star-o my-star-icon"></span>
           </span>
           <br><br>
-          <label for="numUsers">Number of Users to Process:
+          <label for="numSimilarUsers">Number of Most Similar Users to Show:
             <span id="numUsersDisplay">10</span>
           </label><br>
-          <input type="range" id="numUsers" name="numUsers" min="0" max="610"
-          step="1" value="10" onmousemove="displayNumUsers(document.getElementById('numUsers').value)">
+          <input type="range" id="numSimilarUsers" name="numSimilarUsers" min="0" max="100"
+          step="1" value="10" onmousemove="displayNumUsers(document.getElementById('numSimilarUsers').value)">
           <br><br>
           <label for="movieTitle">Select a Movie:</label><br>
           <span id="autocomplete-container">
@@ -60,10 +60,6 @@
              onclick="document.getElementById('selectedMovies').innerHTML=''; 
                       submitForm()">
           </div> 
-          <br><br>
-          <input type="checkbox" id="userLinksOnly" name="userLinksOnly" checked>
-          <label for="userLinksOnly">Show User Links Only</label><br>
-          <!-- <input type="submit" value="Render Network"> -->
         </form>
       </td>
       <td id="vizColumn">
@@ -151,20 +147,20 @@
       <td>Added basic form for user input</td><td>6-8</td>
     </tr>
     <tr>
-      <td>Added option to see nearest neighbors only</td><td>1</td>
-    </tr>
-    <tr>
       <td>Added movie search auto-complete functionality</td><td>4</td>
     </tr>
     <tr>
-      <td>Added movie select/clear functionality</td><td>4</td>
+      <td>Integrated select/clear movies functionality into the visualization</td><td>4</td>
     </tr>
     <tr>
       <td>Added functionality of jumping to a neighbor's network (by updating the
       network dynamically)</td><td>4</td>
     </tr>
     <tr>
-      <td>Added a button for- / or / Made it so you only see the top N "best" neighbors</td><td>??</td>
+      <td>Added a slider for displaying only the N most similar neighbors</td><td>4</td>
+    </tr>
+    <tr>
+      <td>Debugging...</td><td>4-8</td>
     </tr>
     <tr>
       <th>Total </th><th> ??-??</th>
