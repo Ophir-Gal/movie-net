@@ -18,19 +18,73 @@ function findUndirectedEdge(links, target, source){
   return false
 }
 
-function extractNodesAndLinks(ratingData,
-                              username="User",
-                              selectedMovies=[1,2,145,318,6238,920],
-                              numUsersToProcess=10,
-                              likeThreshold=0,
-                              idToTitle,
-                              nearestOnly=true,
-                              centerPerson=0) {
+function extractGraphUserLinksOnly(ratingData, username="User",
+                                   selectedMovies=[1,2,145,318,920],
+                                   numUsersToProcess=10, likeThreshold=0,
+                                   idToTitle, centerPerson=0) {
+  let nodes = []
+  let links = []
+
+  if (centerPerson !== 0 && centerPerson !== username) {
+    // add username's ratings to ratingData
+    for (let movieId of selectedMovies) {
+      ratingData = [{"id": username,
+                     "movieId": movieId,
+                     "rating": likeThreshold}].concat(ratingData)
+    }
+    // replace user's selectedMovies variable with centerPerson's
+    selectedMovies = []
+    for (let d of ratingData) {
+      if (d["id"] === centerPerson && d["rating"] >= likeThreshold) {
+        selectedMovies.push(d["movieId"])
+      }
+    }
+    var originalUsername = username  // add the user's node
+    console.log(username)
+    // replace user's username with centerPerson's id (treat them as the user)
+    username = centerPerson
+  }
+
+  // Go through rating data to form links for the graph 
+  for (let d of ratingData) {
+    if (d["id"] === username) {
+      continue
+    } else if(d["rating"] >= likeThreshold && selectedMovies.includes(d["movieId"])){
+      let found = findUndirectedEdge(links, target=username, source=d["id"])
+      let movieTitle = idToTitle[String(d["movieId"])].title
+      if (found && (!found["movies"].includes(movieTitle))){
+        found["movies"].push(movieTitle) 
+      } else {
+        links.push({"target":username, "source":d["id"], "movies":[movieTitle]})
+      }
+    }
+    if (d["id"] >= numUsersToProcess) break
+  }
+  
+  nodes.push({"id": username})  // add user first so that they're centered
+  // add only nodes of direct neighbors
+  if (findUndirectedEdge(links, target=username, source=originalUsername)) {
+    nodes.push({"id": originalUsername})
+  }
+  for (let i=1; i<= numUsersToProcess; i++){//TOTAL_NUM_OF_USERS; i++){
+    let found = findUndirectedEdge(links, target=username, source=i)
+    if (found) {
+      nodes.push({"id": i})
+    }
+  } 
+  console.log('finished with user:', username)
+
+  return {"nodes":nodes, "links":links}
+}
+
+function extractGraph(ratingData, username="User",
+                      selectedMovies=[1,2,145,318,6238,920],
+                      numUsersToProcess=10, likeThreshold=0,
+                      idToTitle, userLinksOnly=true, centerPerson=0) {
   let nodes = []
   let links = []
   for (let i=0; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
     let userId = i === 0 ? username : i
-    nodes.push({"id": userId})
     for (let d of ratingData){
       if (d["id"] === userId || d["id"] < i) {
         continue
@@ -47,7 +101,8 @@ function extractNodesAndLinks(ratingData,
       }
     }
     console.log('finished with user:', userId)
-    if (nearestOnly) {  // if want to se nearest neighbors only
+    if (userLinksOnly) {  // if want to see user's links only
+      nodes.push({"id": username})  // add them as a node
       for (let i=1; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
         let found = findUndirectedEdge(links, target=userId, source=i)
         if (found) {
@@ -55,6 +110,8 @@ function extractNodesAndLinks(ratingData,
         }
       }
       break // stop constructing the network
+    } else {
+      nodes.push({"id": userId})  // add them as a node
     }
   }
   return {"nodes":nodes, "links":links}
@@ -81,18 +138,21 @@ function submitForm(centerPerson=0){
       username = username === "" ? "Jane" : username
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
-      let nearestOnly = document.getElementById('nearestOnly').checked
+      let userLinksOnly = document.getElementById('userLinksOnly').checked
       idToTitle = dataDict.idToTitleDict  // need to be global scope
       titleToId = dataDict.titleToIdDict  // need to be global scope
       let selectedMovies = getSelectedMovieIDs()
-      let nodesAndLinks = extractNodesAndLinks(dataDict.ratingData,
-                                               username=username,
-                                               selectedMovies=selectedMovies,
-                                               numUsersToProcess=numUsersToProcess,
-                                               likeThreshold=likeThreshold,
-                                               idToTitle=idToTitle,
-                                               nearestOnly=nearestOnly,
-                                               centerPerson=centerPerson)                                              
+      if (userLinksOnly) {
+        var nodesAndLinks = extractGraphUserLinksOnly(dataDict.ratingData,
+                                                      username,
+                                                      selectedMovies,
+                                                      numUsersToProcess,
+                                                      likeThreshold,
+                                                      idToTitle,
+                                                      centerPerson)
+      } else {
+        var nodesAndLinks = undefined // extractGraph() 
+      }
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))
@@ -180,7 +240,6 @@ autocomplete_results.addEventListener("click", function(e) {
     let selectedTitle = e.target.innerHTML
     if (e.target && e.target.nodeName == "LI") { // If it was a list item
       // List item found!  Output the value and add it to selected movies!
-      console.log("Selected", selectedTitle)
       let listItemToAdd = '<li class="selected-movie">' + selectedTitle + '</li>'
       let selectedMovies = document.getElementById('selectedMovies')
       if (!selectedMovies.innerHTML.includes(selectedTitle)) {
