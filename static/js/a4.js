@@ -18,13 +18,14 @@ function findUndirectedEdge(links, target, source){
   return false
 }
 
-function extractGraphUserLinksOnly(ratingData, username="User",
-                                   selectedMovies=[1,2,145,318,920],
-                                   numUsersToProcess=10, likeThreshold=0,
-                                   idToTitle, centerPerson=0) {
+function extractGraph(ratingData, username="User",
+                      selectedMovies=[1,2,145,318,920,6238],
+                      numUsersToProcess=10, likeThreshold=0,
+                      idToTitle, centerPerson=0) {
   let nodes = []
   let links = []
 
+  // if clicked on a numbered-person node
   if (centerPerson !== 0 && centerPerson !== username) {
     // add username's ratings to ratingData
     for (let movieId of selectedMovies) {
@@ -62,7 +63,7 @@ function extractGraphUserLinksOnly(ratingData, username="User",
   }
   
   nodes.push({"id": username})  // add user first so that they're centered
-  // add only nodes of direct neighbors
+  // add only nodes connected to user
   if (findUndirectedEdge(links, target=username, source=originalUsername)) {
     nodes.push({"id": originalUsername})
   }
@@ -74,46 +75,6 @@ function extractGraphUserLinksOnly(ratingData, username="User",
   } 
   console.log('finished with user:', username)
 
-  return {"nodes":nodes, "links":links}
-}
-
-function extractGraph(ratingData, username="User",
-                      selectedMovies=[1,2,145,318,6238,920],
-                      numUsersToProcess=10, likeThreshold=0,
-                      idToTitle, userLinksOnly=true, centerPerson=0) {
-  let nodes = []
-  let links = []
-  for (let i=0; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
-    let userId = i === 0 ? username : i
-    for (let d of ratingData){
-      if (d["id"] === userId || d["id"] < i) {
-        continue
-      } else if(d["id"] <= numUsersToProcess
-                && d["rating"] >= likeThreshold
-                && selectedMovies.includes(d["movieId"])){
-        let found = findUndirectedEdge(links, target=userId, source=d["id"])
-        let movieTitle = idToTitle[String(d["movieId"])].title
-        if (found && (!found["movies"].includes(movieTitle))){
-          found["movies"].push(movieTitle) 
-        } else {
-          links.push({"target":userId, "source":d["id"], "movies":[movieTitle]})
-        }
-      }
-    }
-    console.log('finished with user:', userId)
-    if (userLinksOnly) {  // if want to see user's links only
-      nodes.push({"id": username})  // add them as a node
-      for (let i=1; i<=numUsersToProcess && i<=TOTAL_NUM_OF_USERS; i++){
-        let found = findUndirectedEdge(links, target=userId, source=i)
-        if (found) {
-          nodes.push({"id": i})
-        }
-      }
-      break // stop constructing the network
-    } else {
-      nodes.push({"id": userId})  // add them as a node
-    }
-  }
   return {"nodes":nodes, "links":links}
 }
 
@@ -138,21 +99,16 @@ function submitForm(centerPerson=0){
       username = username === "" ? "Jane" : username
       let likeThreshold = Number(document.getElementById('likeThreshold').value)
       let numUsersToProcess = Number(document.getElementById('numUsers').value)
-      let userLinksOnly = document.getElementById('userLinksOnly').checked
       idToTitle = dataDict.idToTitleDict  // need to be global scope
       titleToId = dataDict.titleToIdDict  // need to be global scope
       let selectedMovies = getSelectedMovieIDs()
-      if (userLinksOnly) {
-        var nodesAndLinks = extractGraphUserLinksOnly(dataDict.ratingData,
-                                                      username,
-                                                      selectedMovies,
-                                                      numUsersToProcess,
-                                                      likeThreshold,
-                                                      idToTitle,
-                                                      centerPerson)
-      } else {
-        var nodesAndLinks = undefined // extractGraph() 
-      }
+      var nodesAndLinks = extractGraph(dataDict.ratingData,
+                                        username,
+                                        selectedMovies,
+                                        numUsersToProcess,
+                                        likeThreshold,
+                                        idToTitle,
+                                        centerPerson)
       renderNetworkViz(nodesAndLinks.nodes, nodesAndLinks.links, username)
     })
     .catch(e => console.log(e))
